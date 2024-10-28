@@ -1,0 +1,116 @@
+import express, {Response, Request} from 'express'
+import asyncHandler from 'express-async-handler'
+import { ProductModel } from './ProductModel'
+import { Product } from './Product';
+
+export const productRouter = express.Router()
+
+//GET all products 
+productRouter.get(
+    '/',
+    asyncHandler(async (req : Request, res : Response) => {
+        const products = await ProductModel.find();
+        res.json(products);
+    })
+);
+
+//GET a product based on its id
+productRouter.get(
+    '/:id',
+    asyncHandler(async (req: Request, res: Response) => {
+        const product = await ProductModel.findById(req.params.id);
+
+        if(product){
+            res.json(product);
+        }
+        
+        else{
+            res.status(404).json({message: "Product not found"});
+        }
+    })
+);
+
+//GET a product based on its title
+productRouter.get(
+    '/title/:title',
+    asyncHandler(async (req: Request, res: Response) => {
+        const product = await ProductModel.findOne({title: req.params.title});
+
+        if(product){
+            res.json(product);
+        }
+        
+        else{
+            res.status(404).json({message: "Product not found"});
+        }
+    })
+);
+
+
+//POST new product
+productRouter.post(
+    '/',
+    asyncHandler(async (req: Request, res: Response) => {
+        const {title,img,price,quantity} = req.body;
+
+        if(!title){
+            res.status(400).json({message: "Title is required"});
+        }
+
+        else if(!price){
+            res.status(400).json({message: "Price is required"});
+        }
+
+        else if(!quantity || quantity <= 0){
+            res.status(400).json({message: "Quantity must be greater than 0"});
+        }
+
+        else{
+            const product = new ProductModel({title,img,price,quantity});
+            const newProduct = await product.save();
+            res.json(201).json(newProduct);
+        }
+    })
+);
+
+//PUT update product by id
+productRouter.put(
+    '/:id',
+    asyncHandler(async (req: Request, res: Response) => {
+        const { id } = req.params
+        const { title, img, price, quantity } = req.body;
+
+        const updatedProduct = await ProductModel.findByIdAndUpdate(
+            id,
+            {title,img,price,quantity},
+            {new: true, runValidators: true}
+        );
+
+        if(!updatedProduct){
+            res.status(404).json({message: "Product not found"});
+        }
+
+        else{
+            res.json(updatedProduct);
+            res.status(201).json({message: "Product updated successfully"});
+        }
+    })
+);
+
+//DELETE a product by id
+productRouter.delete(
+    '/:id',
+    asyncHandler(async (req: Request, res: Response) => {
+        const { id } = req.params
+
+        const deletedProduct = await ProductModel.findByIdAndDelete(id);
+
+        if(!deletedProduct){
+            res.status(404).json({message: "Product not found"});
+        }
+
+        else{
+            res.status(201).json({message: "Product deleted successfully"});
+        }
+    })
+);
