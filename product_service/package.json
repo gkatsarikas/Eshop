@@ -19,6 +19,7 @@
     "express": "^4.21.1",
     "express-async-handler": "^1.2.0",
     "mongoose": "^8.7.3",
+    "multer": "^1.4.5-lts.1",
     "ts-node-dev": "^2.0.0"
   },
   "devDependencies": {
@@ -28,6 +29,7 @@
     "@types/express": "^5.0.0",
     "@types/helmet": "^0.0.48",
     "@types/http-status-codes": "^1.2.0",
+    "@types/multer": "^1.4.12",
     "@types/node": "^22.8.1",
     "@types/uuid": "^10.0.0",
     "nodemon": "^3.1.7",
