@@ -3,9 +3,12 @@ import { useParams } from "react-router-dom";
 import { useGetProductsByTitle } from "../hooks/ProductHook";
 import LoadingBox from "../components/LoadingBox";
 import MessageBox from "../components/MessageBox";
-import { getError } from "../utils";
+import { getError, toCartItem } from "../utils";
 import { ApiError } from "../types/Error";
 import { Col, Row, ListGroup, Card, Badge, Button } from "react-bootstrap";
+import { useContext } from "react";
+import { Store } from "../Store";
+import { CartItem } from "../types/Cart";
 
 export default function ProductPage() {
 
@@ -17,6 +20,26 @@ export default function ProductPage() {
     isLoading,
     error,
   } = useGetProductsByTitle(title!)
+
+  const {state,dispatch} = useContext(Store)
+  const {cart} = state
+
+
+  const addToCart = (item:CartItem) => {
+    const existingItem = cart.cartItems.find((x) => x._id === product!._id)
+    const amount = existingItem ? existingItem.amount + 1 : 1
+
+    if(product!.quantity < amount){
+      alert('Sorry, the product is unavailable')
+      return
+    }
+
+    dispatch({
+      type: 'CART_ADD_ITEM',
+      payload: {...item,amount},
+    })
+    console.log('Product added to cart')
+  }
 
   return (
     isLoading ? (
@@ -45,19 +68,13 @@ export default function ProductPage() {
               </ListGroup.Item>
               <h1>{product.title}</h1>
             </ListGroup>
-
-            <ListGroup.Item>
-              Price: {product.price}€
-            </ListGroup.Item>
-
           <Col md={3}>
             <Card>
               <Card.Body>
                 <ListGroup variant="flush">
                   <ListGroup.Item>
                     <Row>
-                      <Col>Price:</Col>
-                      <Col>{product.price}</Col>
+                      <Col>{product.price}€</Col>
                     </Row>
                   </ListGroup.Item>
                   <ListGroup.Item variant="flush">
@@ -76,7 +93,7 @@ export default function ProductPage() {
                     {product.quantity > 0 && (
                       <ListGroup.Item>
                         <div className="d-grid">
-                          <Button variant="primary">Add to cart</Button>
+                          <Button variant="primary" onClick={() => addToCart(toCartItem(product))}>Add to cart</Button>
                         </div>
                       </ListGroup.Item>
                     )}

@@ -1,10 +1,34 @@
 import { Button, Card } from "react-bootstrap"
 import { Product } from "../types/Product"
-import { Link } from "react-router-dom"
+import { Link} from "react-router-dom"
+import { useContext } from "react"
+import { Store } from "../Store"
+import { CartItem } from "../types/Cart"
+import { toCartItem } from "../utils"
 
 
 function ProductItem({product}: {product: Product}){
 
+    const {state,dispatch} = useContext(Store)
+    const {cart: {cartItems}} = state
+
+
+    const addToCart = (item: CartItem) => {
+      const existingItem = cartItems.find((x) => x._id === product._id)
+      const amount = existingItem ? existingItem.amount + 1 : 1
+
+      if(product.quantity < amount){
+        alert('Sorry, product is unavailable.')
+        return 
+      }
+
+      dispatch({
+        type: 'CART_ADD_ITEM',
+        payload: {...item, amount},
+      })
+
+      console.log('Product added to cart')
+    }
 
     return (
 
@@ -22,7 +46,7 @@ function ProductItem({product}: {product: Product}){
             Out of stock
           </Button>
         ) : (
-          <Button>
+          <Button onClick={() => addToCart(toCartItem(product))}>
             Add to cart
           </Button>
         )}
