@@ -1,9 +1,29 @@
 import express, {Response, Request} from 'express'
 import asyncHandler from 'express-async-handler'
 import { ProductModel } from './ProductModel'
-import { Product } from './Product';
+import multer from 'multer'
+import path from 'path'
+import fs from 'fs'
 
 export const productRouter = express.Router()
+
+const dir = path.join(__dirname, 'uploads', 'images');
+if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+}
+
+//Handle images
+const storage = multer.diskStorage({
+    destination: function(req,file,cb){
+        cb(null,'uploads/images')
+    },
+    filename: function (req,file,cb){
+        cb(null,Date.now() + path.extname(file.originalname));
+    },
+})
+const upload = multer({ storage });
+
+
 
 //GET all products 
 productRouter.get(
@@ -50,26 +70,32 @@ productRouter.get(
 //POST new product
 productRouter.post(
     '/',
+    upload.single('img'), // This will handle a single image upload under the field 'img'
     asyncHandler(async (req: Request, res: Response) => {
-        const {title,img,price,quantity} = req.body;
+        const { title, price, quantity } = req.body;
 
-        if(!title){
-            res.status(400).json({message: "Title is required"});
+        if (!title) {
+            res.status(400).json({ message: "Title is required" });
+            return;
+        } else if (!price) {
+            res.status(400).json({ message: "Price is required" });
+            return;
+        } else if (!quantity || quantity <= 0) {
+            res.status(400).json({ message: "Quantity must be greater than 0" });
+            return;
         }
 
-        else if(!price){
-            res.status(400).json({message: "Price is required"});
-        }
+        const img = req.file ? `/uploads/images/${req.file.filename}` : null; // Store the image path
 
-        else if(!quantity || quantity <= 0){
-            res.status(400).json({message: "Quantity must be greater than 0"});
-        }
+        const product = new ProductModel({
+            title,
+            img,  // Save the image path in the 'img' field
+            price,
+            quantity,
+        });
 
-        else{
-            const product = new ProductModel({title,img,price,quantity});
-            const newProduct = await product.save();
-            res.json(201).json(newProduct);
-        }
+        const newProduct = await product.save();
+        res.status(201).json(newProduct);  // Return the newly created product
     })
 );
 

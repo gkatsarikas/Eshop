@@ -57,7 +57,7 @@ export default function ProductPage() {
         </Helmet>
         <Row>
           <Col md={6}>
-            <img src={product.img} alt={product.title} className="large" />
+            <img src={`http://localhost:7000${product.img}`} alt={product.title} className="large" />
           </Col>
           <Col md={3}></Col>
             <ListGroup variant="flush">

@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const productClient = axios.create({
+const orderClient = axios.create({
   baseURL:
     process.env.NODE_ENV === 'development' ? 'http://localhost:4000/' : '/',
   headers: {
@@ -9,4 +9,4 @@ const productClient = axios.create({
 })
 
 
-export default productClient
+export default orderClient

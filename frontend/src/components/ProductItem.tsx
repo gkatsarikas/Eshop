@@ -9,9 +9,11 @@ import { toCartItem } from "../utils"
 
 function ProductItem({product}: {product: Product}){
 
+
     const {state,dispatch} = useContext(Store)
     const {cart: {cartItems}} = state
 
+    console.log(product.img)
 
     const addToCart = (item: CartItem) => {
       const existingItem = cartItems.find((x) => x._id === product._id)
@@ -30,17 +32,19 @@ function ProductItem({product}: {product: Product}){
       console.log('Product added to cart')
     }
 
+    const baseUrl = import.meta.env.VITE_BASE_URL || 'http://localhost:7000';
+    
     return (
 
     <Card>
       <Link to={`/product/${product.title}`}>
-        <img src={product.img} className="card-img-top" alt={product.title} />
+        <img src={`${baseUrl}${product.img}`} className="card-img-top"/>
       </Link>
       <Card.Body>
         <Link to={`/product/${product.title}`}>
           <Card.Title>{product.title}</Card.Title>
         </Link>
-        <Card.Text>${product.price}</Card.Text>
+        <Card.Text>{product.price}€</Card.Text>
         {product.quantity === 0 ? (
           <Button variant="light" disabled>
             Out of stock

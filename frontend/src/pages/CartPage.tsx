@@ -1,12 +1,14 @@
 import { useContext } from 'react'
 import { Button, Card, Col, ListGroup, Row } from 'react-bootstrap'
 import { Helmet } from 'react-helmet-async'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import MessageBox from '../components/MessageBox'
 import { Store } from '../Store'
 import { CartItem } from '../types/Cart'
 
 export default function CartPage() {
+
+  const navigate = useNavigate()
 
   const {
     state: {
@@ -27,6 +29,10 @@ export default function CartPage() {
   }
   const removeItemHandler = (item: CartItem) => {
     dispatch({ type: 'CART_REMOVE_ITEM', payload: item })
+  }
+
+  const checkOutHandler = () => {
+    navigate('/order/preview')
   }
 
   return (
@@ -100,7 +106,13 @@ export default function CartPage() {
                     {cartItems.reduce((a, c) => a + c.price * c.amount, 0)}
                   </h3>
                 </ListGroup.Item>
-
+                <ListGroup.Item>
+                  <div className='d-grid'>
+                    <Button type='button' variant='primary' onClick={checkOutHandler} disabled={cartItems.length === 0}>
+                      Proceed to checkout
+                    </Button>
+                  </div>
+                </ListGroup.Item>
               </ListGroup>
             </Card.Body>
           </Card>
