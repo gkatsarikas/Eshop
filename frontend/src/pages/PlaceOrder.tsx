@@ -12,10 +12,12 @@ export default function PlaceOrderPage() {
   const { state, dispatch } = useContext(Store)
   const { cart } = state
 
-  const round2 = (num: number) => Math.round(num * 100) / 100 // 123.2345 => 123.23
+  // Helper function to round numbers to 2 decimal places
+  const round2 = (num: number) => Math.round(num * 100) / 100 
 
+  // Calculate total price with correct rounding for each item subtotal
   cart.totalPrice = round2(
-    cart.cartItems.reduce((a, c) => a + c.quantity * c.price, 0)
+    cart.cartItems.reduce((a, c) => a + round2(c.amount * c.price), 0)
   )
 
   const { mutateAsync: createOrder } = useCreateOrderMutation()
@@ -37,7 +39,6 @@ export default function PlaceOrderPage() {
       console.log(err)
     }
   }
-
 
   return (
     <div>
@@ -65,7 +66,7 @@ export default function PlaceOrderPage() {
                       <Col md={3}>
                         <span>{item.amount}</span>
                       </Col>
-                      <Col md={3}>{item.price}€</Col>
+                      <Col md={3}>{round2(item.price).toFixed(2)}€</Col>
                     </Row>
                   </ListGroup.Item>
                 ))}

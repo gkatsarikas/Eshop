@@ -89,13 +89,13 @@ productRouter.post(
 
         const product = new ProductModel({
             title,
-            img,  // Save the image path in the 'img' field
+            img,  
             price,
             quantity,
         });
 
         const newProduct = await product.save();
-        res.status(201).json(newProduct);  // Return the newly created product
+        res.status(201).json(newProduct);  
     })
 );
 

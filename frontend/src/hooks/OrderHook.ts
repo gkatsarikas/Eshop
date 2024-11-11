@@ -4,12 +4,12 @@ import { Order } from "../types/Order";
 import orderClient from "../clients/OrderClient";
 
 
-export const useGetOrderDetailsQuery = (id: string) =>
+export const useGetUserOrders = () =>
   useQuery({
-    queryKey: ['orders', id],
-    queryFn: async () => (await orderClient.get<Order>(`/orders/${id}`)).data,
-  });
-
+    queryKey: ['order-history'],
+    queryFn: async () =>
+      (await orderClient.get<Order[]>(`/orders`)).data,
+  })
 
 
 

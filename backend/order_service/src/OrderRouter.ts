@@ -18,10 +18,10 @@ orderRouter.get(
 
 //GET orders by a specific username 
 orderRouter.get(
-    '/:username',
+    '/:user',
     asyncHandler(async (req: Request, res: Response) => {
-        const { username } = req.params
-        const orders = await OrderModel.find({ user: username })
+        const { user } = req.params
+        const orders = await OrderModel.find({ user: user })
         if (!orders) {
             res.status(404).json({ message: "No orders found for this user." })
         } else {
