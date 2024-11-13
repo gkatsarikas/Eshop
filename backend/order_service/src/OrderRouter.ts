@@ -32,11 +32,10 @@ orderRouter.get(
 
 //GET order based on its ID
 orderRouter.get(
-  '/order/:id',
+  '/id/:id',
   asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { id } = req.params;
-      const order = await OrderModel.findById(id).populate('orderItems.productID');
+      const order = await OrderModel.findById(req.params.id).populate('orderItems._id');
 
       if (!order) {
         res.status(404).json({ message: "Order not found" });
@@ -44,7 +43,7 @@ orderRouter.get(
         res.status(200).json(order);
       }
     } catch (error) {
-      next(error); // Pass error to the global error handler
+      next(error);
     }
   })
 );
@@ -75,7 +74,7 @@ orderRouter.post('/',
 )  
   
   
-  export default orderRouter;
+export default orderRouter;
   
   
   

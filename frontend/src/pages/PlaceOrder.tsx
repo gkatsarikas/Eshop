@@ -34,7 +34,7 @@ export default function PlaceOrderPage() {
       localStorage.removeItem('cartItems')
 
       alert('Order placed successfully.')
-      navigate(`/`)
+      navigate(`/order/info/${data.order._id}`)
     } catch (err) {
       console.log(err)
     }

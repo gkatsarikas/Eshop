@@ -47,7 +47,7 @@ export default function UserOrdersPage() {
                                     <Button
                                         type="button"
                                         variant="light"
-                                        onClick={() => navigate(`/order/${order._id}`)}
+                                        onClick={() => navigate(`/order/info/${order._id}`)}
                                     >
                                         Order details
                                     </Button>

@@ -14,6 +14,9 @@ import CartPage from "./pages/CartPage"
 import PlaceOrderPage from "./pages/PlaceOrder"
 import UserOrdersPage from "./pages/UserOrders"
 import CreateProductPage from "./pages/CreateProduct"
+import UpdateProductPage from "./pages/UpdateProduct"
+import DeleteProductPage from "./pages/DeleteProduct"
+import OrderPage from "./pages/OrderPage"
 
 
 const router = createBrowserRouter(
@@ -23,8 +26,11 @@ const router = createBrowserRouter(
       <Route path="product/:title" element={<ProductPage/>}/>
       <Route path="cart" element={<CartPage/>}/>
       <Route path="order/preview" element={<PlaceOrderPage />}/>
+      <Route path="order/info/:id" element={<OrderPage />} />
       <Route path="orders/history" element={<UserOrdersPage/>}/>
       <Route path="/product/create" element={<CreateProductPage />} />
+      <Route path="/product/update" element={<UpdateProductPage/>} />
+      <Route path="/product/delete" element={<DeleteProductPage/>} />
     </Route>
   )
 )

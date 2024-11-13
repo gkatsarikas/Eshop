@@ -11,6 +11,11 @@ export const useGetUserOrders = () =>
       (await orderClient.get<Order[]>(`/orders`)).data,
   })
 
+export const useGetOrderByID = (id: string) => 
+  useQuery({
+    queryKey: ['orders', id],
+    queryFn: async () => (await orderClient.get<Order>(`/orders/id/${id}`)).data,
+  })
 
 
 export const useCreateOrderMutation = () =>
@@ -29,4 +34,4 @@ export const useCreateOrderMutation = () =>
         ).data,
     })
 
-
+    
