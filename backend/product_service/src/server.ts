@@ -6,8 +6,7 @@ import cors from 'cors'
 import path from 'path'
 
 dotenv.config()
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost/productsDB'
-
+const MONGODB_URI = 'mongodb://root:example@products_db:27017/products_db?authSource=admin';
 mongoose.set('strictQuery',true);
 
 mongoose.connect(MONGODB_URI).then(

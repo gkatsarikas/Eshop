@@ -4,6 +4,7 @@ import { Store } from './Store';
 import { useContext } from 'react';
 import { LinkContainer } from 'react-router-bootstrap';
 import 'bootstrap-icons/font/bootstrap-icons.css';  
+import SearchBar from './components/SearchBar';
 
 function App() {
   const {
@@ -18,6 +19,7 @@ function App() {
             <LinkContainer to="/">
               <Navbar.Brand>MyEshop</Navbar.Brand>
             </LinkContainer>
+            <SearchBar />
             <Nav className="ms-auto d-flex align-items-center">
               {/* Cart Link */}
               <Link to="/cart" className="nav-link d-flex align-items-center me-3">
@@ -29,10 +31,9 @@ function App() {
                 )}
               </Link>
 
-              {/* Dropdown Menu with "Hamburger" Icon */}
               <Dropdown align="end">
                 <Dropdown.Toggle variant="dark" id="dropdown-basic">
-                  <i className="bi bi-list" style={{ fontSize: '1.5rem' }}></i> {/* Hamburger Icon */}
+                  <i className="bi bi-list" style={{ fontSize: '1.5rem' }}></i> 
                 </Dropdown.Toggle>
 
                 <Dropdown.Menu>

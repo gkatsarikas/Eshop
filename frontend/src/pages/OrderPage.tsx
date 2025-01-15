@@ -40,6 +40,8 @@ export default function OrderPage(){
                             <Card.Title>Order info</Card.Title>
                             <Card.Text>
                                 <strong>User: {order.user}</strong>
+                            </Card.Text>
+                            <Card.Text>
                                 <strong>Status: {order.status}</strong>
                             </Card.Text>
                         </Card.Body>

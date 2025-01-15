@@ -31,19 +31,6 @@ img.thumbnail{
   font-size: 1.8rem;
 }
 
-a.header-link,
-.header-link > a{
-  border: 1px black solid;
-  border-radius: 2px;
-  color: white;
-  font-weight: bold;
-}
-
-a.header-link:hover,
-.header-link > a:hover {
-  color: white;
-  border: 1px white solid;
-}
 
 
 .add-product-button {

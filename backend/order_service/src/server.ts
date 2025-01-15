@@ -5,7 +5,7 @@ import { orderRouter } from './OrderRouter'
 import cors from 'cors'
 
 dotenv.config()
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost/ordersDB'
+const MONGODB_URI = 'mongodb://root:example@orders_db:27017/orders_db?authSource=admin';
 
 mongoose.set('strictQuery',true);
 

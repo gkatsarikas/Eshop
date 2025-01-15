@@ -30,14 +30,14 @@ const UpdateProductPage = () => {
       await updateProductMutation.mutateAsync({ id: productId, ...productData });
       alert('Product updated successfully!');
       navigate(`/`);
-    } catch{
+    } catch {
       alert('Failed to update product.');
     }
   };
 
   return (
-    <div>
-      <h2>Update Product</h2>
+    <div style={{ padding: '20px', maxWidth: '600px', margin: '0 auto', backgroundColor: '#f9f9f9', borderRadius: '8px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
+      <h2 style={{ textAlign: 'center', color: '#333' }}>Update Product</h2>
       {!isEditing ? (
         <div>
           <input
@@ -45,36 +45,52 @@ const UpdateProductPage = () => {
             placeholder="Enter Product ID"
             value={productId}
             onChange={(e) => setProductId(e.target.value)}
+            style={{ width: '100%', padding: '10px', margin: '10px 0', border: '1px solid #ddd', borderRadius: '4px', fontSize: '14px' }}
           />
-          <button onClick={handleFetchProduct}>Find</button>
+          <button
+            onClick={handleFetchProduct}
+            style={{ width: '100%', padding: '12px', margin: '10px 0', backgroundColor: '#007bff', border: 'none', borderRadius: '4px',
+               color: 'white', fontSize: '16px', cursor: 'pointer', transition: 'background-color 0.3s' }}
+          >
+            Fetch Product
+          </button>
         </div>
       ) : (
-        <form onSubmit={(e) => { e.preventDefault(); handleUpdateProduct(); }}>
-          <label>
+        <form onSubmit={(e) => { e.preventDefault(); handleUpdateProduct(); }} style={{ display: 'flex', flexDirection: 'column' }}>
+          <label style={{ fontWeight: 'bold', marginBottom: '5px' }}>
             Title:
             <input
               type="text"
               value={productData.title}
               onChange={(e) => setProductData({ ...productData, title: e.target.value })}
+              style={{ padding: '10px', margin: '10px 0', border: '1px solid #ddd', borderRadius: '4px' }}
             />
           </label>
-          <label>
+          <label style={{ fontWeight: 'bold', marginBottom: '5px' }}>
             Price:
             <input
               type="number"
               value={productData.price}
               onChange={(e) => setProductData({ ...productData, price: parseFloat(e.target.value) })}
+              style={{ padding: '10px', margin: '10px 0', border: '1px solid #ddd', borderRadius: '4px' }}
             />
           </label>
-          <label>
+          <label style={{ fontWeight: 'bold', marginBottom: '5px' }}>
             Quantity:
             <input
               type="number"
               value={productData.quantity}
               onChange={(e) => setProductData({ ...productData, quantity: parseInt(e.target.value) })}
+              style={{ padding: '10px', margin: '10px 0', border: '1px solid #ddd', borderRadius: '4px' }}
             />
           </label>
-          <button type="submit">Submit changes</button>
+          <button
+            type="submit"
+            style={{ width: '100%', padding: '12px', margin: '10px 0', backgroundColor: '#007bff', border: 'none', borderRadius: '4px', 
+              color: 'white', fontSize: '16px', cursor: 'pointer', transition: 'background-color 0.3s' }}
+          >
+            Submit changes
+          </button>
         </form>
       )}
     </div>
