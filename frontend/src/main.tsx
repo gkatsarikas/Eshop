@@ -17,12 +17,16 @@ import CreateProductPage from "./pages/CreateProduct"
 import UpdateProductPage from "./pages/UpdateProduct"
 import DeleteProductPage from "./pages/DeleteProduct"
 import OrderPage from "./pages/OrderPage"
+import LoginPage from "./pages/LoginPage"
+import RegisterPage from "./pages/RegisterPage"
 
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<App/>}>
       <Route index={true} element={<HomePage/>} />
+      <Route path="login" element={<LoginPage/>} />
+      <Route path="register" element={<RegisterPage/>}/>
       <Route path="product/:title" element={<ProductPage/>}/>
       <Route path="cart" element={<CartPage/>}/>
       <Route path="order/preview" element={<PlaceOrderPage />}/>
