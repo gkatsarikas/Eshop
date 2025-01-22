@@ -1,56 +1,70 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from "react";
 import { Form, Button, Container, Alert } from "react-bootstrap";
-import axios from "axios"; // Import axios if you use it
+import { useNavigate } from "react-router-dom";
+import { decodeJwt } from "../utils"
+import { useAuth } from "../hooks/AuthHook";
 
-export default function LoginPage() {
-  const navigate = useNavigate();
-
+const LoginPage: React.FC = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const {login} = useAuth();
+
+  const navigate = useNavigate();
+
 
   const handleLogin = async (e: React.FormEvent) => {
+    
     e.preventDefault();
     setError(null);
+  
+    const url = import.meta.env.VITE_KEYCLOAK_URL;
+    const client_id = import.meta.env.VITE_CLIENT_ID;
+    const client_secret = import.meta.env.VITE_CLIENT_SECRET;
 
     try {
-      // Set up the data for the Keycloak token request
-      const requestData = new URLSearchParams();
-      requestData.append("username", username);
-      requestData.append("password", password);
-      requestData.append("client_id", "eshop-frontend");
-      requestData.append("client_secret", "hkx7HYPColqJbycJfSspg7OtMWxGTjNQ");
-      requestData.append("grant_type", "password");
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: new URLSearchParams({
+          username: username,
+          password: password,
+          client_id: client_id,
+          client_secret: client_secret,
+          grant_type: "password",
+        }).toString(),
+      });
+  
+      if (!response.ok) {
+        throw new Error("Invalid username or password");
+      }
+  
+      const data = await response.json();
+      const access_token = data.access_token;
+      const refresh_token = data.refresh_token;
+  
+      // Decode and store token (optional)
+      console.log("Access Token:", access_token);
+      const decoded_at = decodeJwt(access_token);
+      console.log("Decoded Access Token:", decoded_at);
+  
+      console.log("Refresh Token:", refresh_token);
+      const decoded_rt = decodeJwt(refresh_token);
+      console.log("Decoded Refresh Token:", decoded_rt);
 
-      // Make the HTTP request to the Keycloak token endpoint
-      const response = await axios.post(
-        "http://localhost:8182/realms/Eshop/protocol/openid-connect/token",
-        requestData,
-        {
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-        }
-      );
+      //Store both tokens at local storage 
+      localStorage.setItem("access_token",access_token);
+      localStorage.setItem("refresh_token",refresh_token);
 
-      // If successful, store the token (e.g., in localStorage or state) and navigate
-      const { access_token } = response.data;
-      console.log("Login successful:", access_token);
+      login(access_token, refresh_token);
 
-      // Save token if needed, e.g., localStorage.setItem('access_token', access_token);
-
-      // Navigate to the home page
+      // Navigate to the home page or dashboard
       navigate("/");
-    } catch (err) {
-      console.error("Login failed:", err);
-      setError("Login failed. Please check your username and password.");
+    } catch (err: any) {
+      setError(err.message || "Login failed");
     }
-  };
-
-  const redirectToRegister = () => {
-    // Navigate to the registration page
-    navigate("/register");
   };
 
   return (
@@ -95,15 +109,17 @@ export default function LoginPage() {
         </Button>
       </Form>
 
-      {/* Register Redirect */}
+      {/* Link to Login */}
       <div className="mt-3 text-center">
         <p>
-          Don't have an account?{" "}
-          <Button variant="link" onClick={redirectToRegister} className="p-0">
-            Register here
+          Do not have an account?{" "}
+          <Button variant="link" onClick={() => navigate("/register")} className="p-0">
+            Register
           </Button>
         </p>
       </div>
     </Container>
   );
-}
+};
+
+export default LoginPage;

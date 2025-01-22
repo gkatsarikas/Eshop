@@ -1,82 +1,98 @@
-import { useState } from "react";
+import React,{useState} from "react";
+import {Form,Button,Container,Alert} from 'react-bootstrap'
 import { useNavigate } from "react-router-dom";
-import { Form, Button, Container, Alert } from "react-bootstrap";
-import axios from "axios"; // Import axios for HTTP requests
 
-export default function RegisterPage() {
-  const navigate = useNavigate();
+const RegisterPage: React.FC = () => {
 
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [role, setRole] = useState("Customer"); // Default to 'Customer'
+  const [username,setUsername] = useState('');
+  const [email,setEmail] = useState('');
+  const [password,setPassword] = useState('');
+  const [role,setRole] = useState("Customer"); //Set default role to customer
   const [error, setError] = useState<string | null>(null);
 
-  const getAdminToken = async () => {
-    try {
-      const response = await axios.post(
-        'http://localhost:8182/realms/master/protocol/openid-connect/token',
-        new URLSearchParams({
-          grant_type: 'client_credentials',
-          client_id: 'admin-cli',
-          client_secret: 'szSUscZ3G0yZ6ha9I9WoS9PcxFmpWT5C', // Replace with your actual client secret
-        }),
-        { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
-      );
-      return response.data.access_token; // Return the token
-    } catch (err) {
-      console.error("Failed to obtain admin token:", err);
-      throw new Error("Could not obtain admin token.");
-    }
-  };
+  const navigate = useNavigate();
+
+
+  const master_url = import.meta.env.VITE_KEYCLOAK_MASTER_URL;
+  const client_id = import.meta.env.VITE_KEYCLOAK_MASTER_REALM_CLIENT_ID;
+  const admin_cli_secret = import.meta.env.VITE_KEYCLOAK_ADMIN_CLIENT_SECRET;
+
+
+  const register_url = import.meta.env.VITE_KEYCLOAK_REGISTER_URL;
 
   const handleRegister = async (e: React.FormEvent) => {
+
     e.preventDefault();
     setError(null);
 
+  
     try {
-      // Step 1: Get the admin token
-      const token = await getAdminToken();
-
-      // Step 2: Prepare user data for registration
-      const userData = {
-        email: email,
-        enabled: true,
-        username: username,
-        attributes: {
-          client_id: "eshop-frontend",
-        },
-        groups: [role==="Customer" ? "Customers" : "Sellers"], // Set role based on the selected option
-        credentials: [
-          {
-            type: "password",
-            value: password,
-            temporary: false,
-          },
-        ],
-      };
-
-      // Step 3: Register the user in Keycloak using the obtained token
-      const response = await axios.post(
-        "http://localhost:8182/admin/realms/Eshop/users",
-        userData,
+  
+      //Obtain access token from admin client
+      const adminTokenResponse = await fetch(
+        master_url,
         {
+          method: 'POST',
+          headers:{
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: new URLSearchParams({
+            grant_type: "client_credentials",
+            client_id: client_id,
+            client_secret: admin_cli_secret,
+          }).toString(),
+        } 
+      );
+
+      if(!adminTokenResponse.ok){
+        throw new Error("Failed to fetch access token from admin client");
+      }
+
+      const {access_token: adminToken} = await adminTokenResponse.json();
+
+
+      //Register user
+      const registerResponse = await fetch(
+        register_url,
+        {
+          method: "POST",
           headers: {
-            Authorization: `Bearer ${token}`, // Use the admin Bearer token
+            Authorization: `Bearer ${adminToken}`,
             "Content-Type": "application/json",
           },
+          body: JSON.stringify({
+            username: username,
+            email: email,
+            enabled: true,
+            attributes: {
+              client_id: import.meta.env.VITE_CLIENT_ID,
+            },
+            groups: [role],
+            credentials: [
+              {
+                type: "password",
+                value: password,
+                temporary: false,
+              },
+            ],
+          }),
         }
       );
 
-      console.log("User registered:", response.data);
+      if (!registerResponse.ok) {
+        const errorData = await registerResponse.json();
+        throw new Error(errorData?.errorMessage || "Failed to register user");
+      }
 
-      // Step 4: Redirect to the login page upon successful registration
-      navigate("/login");
-    } catch (err) {
-      console.error("Registration failed:", err);
-      setError("Registration failed. Please try again.");
+      setUsername("");
+      setEmail("");
+      setPassword("");
+      setRole("Customer");
+
+    } catch (err: any) {
+      setError(err.message || "An error occured during registration");
     }
-  };
+  }
 
   return (
     <Container className="d-flex flex-column align-items-center justify-content-center vh-100">
@@ -150,10 +166,12 @@ export default function RegisterPage() {
         <p>
           Already have an account?{" "}
           <Button variant="link" onClick={() => navigate("/login")} className="p-0">
-            Login here
+            Login
           </Button>
         </p>
       </div>
     </Container>
   );
 }
+
+export default RegisterPage

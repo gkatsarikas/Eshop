@@ -19,6 +19,7 @@ import DeleteProductPage from "./pages/DeleteProduct"
 import OrderPage from "./pages/OrderPage"
 import LoginPage from "./pages/LoginPage"
 import RegisterPage from "./pages/RegisterPage"
+import { AuthProvider } from "./hooks/AuthHook"
 
 
 const router = createBrowserRouter(
@@ -43,13 +44,15 @@ const queryClient = new QueryClient()
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <StoreProvider>
-      <HelmetProvider>
-        <QueryClientProvider client={queryClient}>
-          <RouterProvider router={router}/>
-          <ReactQueryDevtools initialIsOpen={false}/>
-        </QueryClientProvider>
-      </HelmetProvider>
-    </StoreProvider>
+    <AuthProvider>
+      <StoreProvider>
+        <HelmetProvider>
+          <QueryClientProvider client={queryClient}>
+            <RouterProvider router={router}/>
+            <ReactQueryDevtools initialIsOpen={false}/>
+          </QueryClientProvider>
+        </HelmetProvider>
+      </StoreProvider>
+    </AuthProvider>
   </React.StrictMode>,
 )
